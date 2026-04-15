@@ -1,128 +1,194 @@
-# StoreOS — Dark Store Decision Intelligence Platform
+<div align="center">
 
-## 🚀 What It Does
+# 🧠 StoreOS — Autonomous Operational Intelligence for Quick-Commerce
 
-StoreOS is a **B2B operational intelligence platform** for dark-store franchise managers running 10-minute quick-commerce infrastructure. It acts as the invisible "brain" behind dark stores, constantly monitoring inventory, cold storage, expiry risk, profitability, and operational conflicts.
+**Real-time loss detection, AI-driven conflict resolution, and voice-controlled autonomous operations for dark-store logistics networks.**
 
-**One-line positioning:** *StoreOS turns invisible operational leakage into visible, time-sensitive action.*
+[![Node.js](https://img.shields.io/badge/Node.js-v18+-339933?style=flat-square&logo=node.js)](https://nodejs.org)
+[![React](https://img.shields.io/badge/React-19-61DAFB?style=flat-square&logo=react)](https://reactjs.org)
+[![MongoDB](https://img.shields.io/badge/MongoDB-Atlas-47A248?style=flat-square&logo=mongodb)](https://mongodb.com)
+[![Python](https://img.shields.io/badge/Python-3.11+-3776AB?style=flat-square&logo=python)](https://python.org)
+[![TailwindCSS](https://img.shields.io/badge/Tailwind-v4-06B6D4?style=flat-square&logo=tailwindcss)](https://tailwindcss.com)
 
-The platform tells managers:
-- **What is going wrong** — Silent loss detection across SKUs
-- **How much money is being lost right now** — Live animated ₹/hr ticker
-- **What action to take in the next 2 hours** — AI-powered recommendations
-- **What happens if they ignore it** — Projected loss calculations
+</div>
 
-## ✨ Why It's Useful
+---
 
-Every dark store already knows *what* to order. StoreOS tells the manager **what those decisions are costing in real time.** Traditional inventory systems track stock levels — StoreOS tracks the *financial bleeding* caused by poor shelf utilization, expiring inventory, and cold storage failures.
+## 📌 Problem Statement
+
+India's quick-commerce dark stores lose **₹2–5 Lakhs/month** per node due to:
+- **Silent inventory loss** — overstocked perishables rot unnoticed
+- **Decision conflicts** — reorder systems clash with expiry timelines
+- **Manual cold-chain monitoring** — thermal anomalies detected hours too late
+- **Language barriers** — store managers operate in regional languages, not English dashboards
+
+**StoreOS eliminates these losses autonomously.**
+
+---
+
+## 🏗️ Architecture Overview
+
+```
+┌──────────────────────────────────────────────────────┐
+│                    FRONTEND (React 19)                │
+│  Mission Control UI • Voice Agent • Real-time Sync   │
+├──────────────────────────────────────────────────────┤
+│                   BACKEND (Express.js)                │
+│  REST API • Alert Engine • Loss Calculator • Auth    │
+├──────────────────────────────────────────────────────┤
+│              ML SERVICE (Flask + Python)              │
+│  Cold Storage Risk Scoring • Predictive Analytics    │
+├──────────────────────────────────────────────────────┤
+│                  DATABASE (MongoDB Atlas)             │
+│  Stores • SKUs • Alerts • Action Logs • Users        │
+└──────────────────────────────────────────────────────┘
+```
+
+---
+
+## ✨ Key Features
+
+### 1. 🔴 Silent Loss Detection Engine
+Identifies inventory items that are **bleeding money silently** — high stock, low velocity, approaching expiry. Calculates real-time ₹/hr drain rate per SKU.
+
+### 2. ⚡ Decision Conflict Resolution
+Detects when the **reorder system contradicts expiry data** (e.g., "reorder Milk" vs "Milk expires in 2 hours"). Recommends optimal action: flash discount, transfer, or accept loss.
+
+### 3. ❄️ Cold Storage Thermal Matrix
+ML-powered risk scoring (0–10) for cold storage units. Monitors temperature, utilization, and expiring item count. Provides cognitive override options with cost/savings analysis.
+
+### 4. 🤖 Agentic AI Voice Interface
+Hands-free operational control via **voice commands**:
+- *"Show me critical alerts"* → Routes to alert dashboard
+- *"Monitor Koramangala"* → Deep-dives into node telemetry
+- *"Resolve all"* → Initiates global mitigation protocols
+- Supports **English, Hindi, and Kannada**
+
+### 5. 📊 Network-Wide Operational Dashboard
+Real-time overview of all dark-store nodes with live loss ticker, priority intervention banners, and per-node health indicators.
+
+---
 
 ## 🛠️ Tech Stack
 
-| Layer | Technology |
-|-------|-----------|
-| **Frontend** | React + Vite + TailwindCSS + Framer Motion + Recharts + i18next |
-| **Backend** | Node.js + Express + MongoDB + Mongoose + JWT + bcrypt |
-| **ML Service** | Python + Flask + Custom Risk Scoring Engine |
-| **Database** | MongoDB Atlas (with automatic fallback to mock data) |
-| **Auth** | JWT-based authentication with demo mode |
-| **i18n** | English, Hindi, Kannada |
+| Layer | Technology | Purpose |
+|-------|-----------|---------|
+| **Frontend** | React 19, Vite 8, Tailwind CSS v4 | Mission Control UI |
+| **Animation** | Framer Motion | Micro-interactions & transitions |
+| **Voice** | Web Speech API | Speech recognition & synthesis |
+| **i18n** | react-i18next | Multilingual support (EN/HI/KN) |
+| **Backend** | Express.js, Node.js 18+ | REST API, business logic |
+| **ML Service** | Flask, Python 3.11+ | Risk scoring models |
+| **Database** | MongoDB Atlas | Persistent storage |
+| **Auth** | JWT | Secure session management |
 
-## 🏗️ Architecture
+---
 
-```
-Frontend (Vite :5173) → Backend (Express :3001) → ML Service (Flask :5001)
-                                  ↓
-                            MongoDB Atlas
-                        (fallback: mock JSON)
-```
-
-### Key Features
-1. **Silent Loss Detector** — Identifies SKUs bleeding money silently
-2. **Decision Conflict Resolver** — Detects when reorder logic conflicts with expiry windows
-3. **Action Timer** — Live countdown for every alert with escalation
-4. **Cold Storage Risk Scorer** — ML-powered risk assessment with ranked alternatives
-
-### Fallback System
-- **Database offline?** → Automatically switches to demo mode with mock data
-- **ML service offline?** → Express runs the same scoring logic locally as backup
-- UI shows badges indicating fallback status
-
-## 🏃‍♂️ How to Run Locally
+## 🚀 Quick Start
 
 ### Prerequisites
 - Node.js 18+
-- Python 3.10+
-- npm
+- Python 3.11+
+- MongoDB Atlas URI (or use built-in demo mode)
 
-### 1. Clone & Setup
+### Installation
 
 ```bash
+# Clone the repository
 git clone https://github.com/Pavan-Hosatti/Salt-and-Pepper.git
 cd Salt-and-Pepper
-```
 
-### 2. Backend
-
-```bash
+# Backend setup
 cd backend
 npm install
+cp .env.example .env  # Configure your MongoDB URI
+npm start
+
+# Frontend setup (new terminal)
+cd frontend
+npm install
 npm run dev
-```
 
-Runs on `http://localhost:3001`
-
-### 3. ML Service
-
-```bash
+# ML Service (new terminal)
 cd ml
 pip install -r requirements.txt
 python app.py
 ```
 
-Runs on `http://localhost:5001`
+### Environment Variables
 
-### 4. Frontend
-
-```bash
-cd frontend
-npm install
-npm run dev
-```
-
-Runs on `http://localhost:5173`
-
-### Demo Account
-- **Email:** demo@storeos.ai
-- **Password:** demo123
-
-Or click "Continue with Demo Account" on the login page.
-
-## 🔐 Environment Variables
-
-### Backend (`backend/.env`)
-```
+```env
+# backend/.env
+MONGODB_URI=mongodb+srv://your-connection-string
+JWT_SECRET=your-secret-key
+ML_SERVICE_URL=http://localhost:5001
 PORT=3001
-MONGODB_URI=<your_mongodb_uri>
-JWT_SECRET=<your_jwt_secret>
-ML_URL=http://localhost:5001
 ```
 
-### Frontend (`frontend/.env`)
+---
+
+## 📁 Project Structure
+
 ```
-VITE_API_URL=http://localhost:3001
+Salt-and-Pepper/
+├── frontend/                # React 19 + Vite + Tailwind v4
+│   ├── src/
+│   │   ├── components/      # Reusable UI components
+│   │   │   ├── TopBar.jsx          # Navigation & status indicators
+│   │   │   ├── LossTicker.jsx      # Real-time loss counter
+│   │   │   ├── StoreCard.jsx       # Node overview cards
+│   │   │   ├── AlertCard.jsx       # Alert display with actions
+│   │   │   ├── SKUTable.jsx        # Inventory telemetry feed
+│   │   │   ├── ColdStoragePanel.jsx # Thermal matrix display
+│   │   │   ├── VoiceAgent.jsx      # Agentic AI voice interface
+│   │   │   └── CountdownTimer.jsx  # Expiry countdown
+│   │   ├── pages/
+│   │   │   ├── Login.jsx           # Authentication portal
+│   │   │   ├── NetworkOverview.jsx # Main dashboard
+│   │   │   ├── Alerts.jsx          # Alert control room
+│   │   │   └── StoreDetail.jsx     # Deep node telemetry
+│   │   ├── context/         # Theme provider (dark/light)
+│   │   ├── locales/         # i18n translations (en/hi/kn)
+│   │   └── api.js           # Axios API configuration
+│   └── index.html
+│
+├── backend/                 # Express.js REST API
+│   ├── routes/
+│   │   ├── auth.js          # JWT authentication
+│   │   ├── stores.js        # Store CRUD & loss calculation
+│   │   ├── alerts.js        # Alert generation engine
+│   │   └── ml.js            # ML service proxy
+│   ├── models/              # MongoDB schemas
+│   ├── data/                # Mock data for demo mode
+│   └── index.js             # Server entry point
+│
+├── ml/                      # Python ML microservice
+│   ├── app.py               # Flask server
+│   └── requirements.txt     # Python dependencies
+│
+└── README.md
 ```
 
-### ML (`ml/.env`)
-```
-PORT=5001
-```
+---
 
-## 🚢 Deployment
+## 🎯 Demo Flow
 
-- **Frontend**: Deploy to Vercel (`npm run build` generates static assets)
-- **Backend**: Deploy to Railway/Render
-- **ML**: Deploy to Railway/Render as a Python service
+1. **Login** → Use demo mode or create an account
+2. **Network Overview** → See all 5 dark-store nodes with live loss rates
+3. **Voice Command** → Click mic, say "Show me critical alerts"
+4. **Alerts Dashboard** → View conflicts, silent losses, expiry warnings
+5. **Voice Command** → "Monitor Koramangala" → Deep-dive into node
+6. **Store Detail** → SKU inventory, thermal matrix, cognitive overrides
+7. **Voice Command** → "Resolve all" → Autonomous global mitigation
+
+---
 
 ## 👥 Team
 
-**Salt and Pepper** — Vibeathon 2026 @ GCEM
+**Salt & Pepper** — Built at Hackathon 2026
+
+---
+
+## 📄 License
+
+This project is built for educational and hackathon demonstration purposes.
