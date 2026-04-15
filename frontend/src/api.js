@@ -21,9 +21,13 @@ api.interceptors.response.use(
       return Promise.reject({ config: response.config, response, isHtmlFallback: true });
     }
     return response;
-  },
+  }
+);
+
+api.interceptors.response.use(
+  (response) => response,
   (error) => {
-    // Check if we should fall back to mocks (Connection error or 404/500)
+    // Check if we should fall back to mocks (Connection error or 404/500/HTML)
     const url = error.config?.url || '';
     
     console.warn(`[API FALLBACK] ${url} failed. Serving high-fidelity mock data.`);
