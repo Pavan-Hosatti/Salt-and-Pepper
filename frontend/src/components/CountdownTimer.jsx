@@ -25,15 +25,28 @@ export default function CountdownTimer({ hours }) {
 
   return (
     <motion.div
-      className={`font-mono font-bold text-lg tabular-nums px-3 py-1 rounded-lg ${
-        isExpired ? 'text-red-400 bg-red-50 line-through' 
-        : isUrgent ? 'text-red-500 bg-red-50 animate-pulse' 
-        : 'text-amber-600 bg-amber-50'
+      className={`h-premium text-2xl tabular-nums rounded-2xl px-4 py-2 border flex items-center gap-3 transition-all duration-700 ${
+        isExpired ? 'text-slate-600 bg-white/5 border-white/5 line-through opacity-30 shadow-none' 
+        : isUrgent ? 'text-rose-500 bg-rose-500/10 border-rose-500/20 shadow-[0_0_20px_rgba(244,63,94,0.1)]' 
+        : 'text-amber-500/80 bg-amber-500/5 border-amber-500/20'
       }`}
-      animate={isUrgent && !isExpired ? { scale: [1, 1.03, 1] } : {}}
-      transition={{ repeat: Infinity, duration: 1 }}
+      animate={isUrgent && !isExpired ? { 
+        borderColor: ['rgba(244,63,94,0.2)', 'rgba(244,63,94,0.5)', 'rgba(244,63,94,0.2)'],
+        boxShadow: ['0 0 10px rgba(244,63,94,0.1)', '0 0 25px rgba(244,63,94,0.3)', '0 0 10px rgba(244,63,94,0.1)']
+      } : {}}
+      transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
     >
-      {String(h).padStart(2, '0')}:{String(m).padStart(2, '0')}:{String(s).padStart(2, '0')}
+      <div className="flex items-center gap-1.5 translate-y-[1px]">
+        {String(h).padStart(2, '0')}
+        <span className="opacity-30 text-sm">:</span>
+        {String(m).padStart(2, '0')}
+        <span className="opacity-30 text-sm">:</span>
+        {String(s).padStart(2, '0')}
+      </div>
+      
+      {!isExpired && isUrgent && (
+        <span className="flex h-2 w-2 rounded-full bg-rose-500 animate-ping" />
+      )}
     </motion.div>
   )
 }

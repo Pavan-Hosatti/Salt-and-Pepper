@@ -70,166 +70,214 @@ export default function StoreDetail() {
   const totalStoreLoss = store.lossPerHour || 0
 
   return (
-    <div className="min-h-screen bg-storeos-surface transition-colors duration-500">
+    <div className="min-h-screen bg-storeos-bg transition-all duration-500">
       <TopBar demoMode={demoMode} />
+      <div className="h-[90px] w-full" /> {/* Bulletproof Header Spacer */}
 
-      <div className="p-4 md:p-6 lg:p-8 max-w-[1600px] mx-auto">
-        {/* Header Section */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
-          <div className="flex items-start gap-4">
-            <button
+      <main className="max-w-[1440px] mx-auto px-8 md:px-16 lg:px-20 py-10 relative">
+        {/* Ambient Store Profile Glow */}
+        <div className="fixed top-0 right-0 w-[40%] h-[40%] bg-storeos-amber/5 blur-[120px] rounded-full pointer-events-none -z-10" />
+        
+        {/* Commander Header */}
+        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-10 mb-12">
+          <div className="flex items-start gap-8">
+            <motion.button
+              whileHover={{ scale: 1.1, x: -5 }}
               onClick={() => navigate('/')}
-              className="mt-1 p-2 rounded-xl bg-storeos-bg border border-storeos-border text-storeos-muted hover:text-storeos-amber hover:border-storeos-amber transition-all"
-              title={t('back_to_network')}
+              className="mt-2 p-4 rounded-3xl bg-storeos-surface/50 border border-storeos-border text-storeos-muted hover:text-storeos-amber hover:border-storeos-amber transition-all shadow-xl"
             >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
-            </button>
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
+            </motion.button>
             <div>
-              <div className="flex items-center gap-2 mb-1">
-                <span className="text-[10px] font-bold text-storeos-muted uppercase tracking-widest">{t('store_node')}</span>
-                <span className="w-1.5 h-1.5 rounded-full bg-storeos-green" />
+              <div className="flex items-center gap-3 mb-4">
+                <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 text-[10px] font-black uppercase tracking-[0.2em]">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                  {t('NODE_ONLINE')}
+                </div>
+                <span className="text-[10px] font-black text-storeos-muted uppercase tracking-[0.3em] opacity-40">/ CLUSTER-BNG-04</span>
               </div>
-              <h1 className="font-sans font-extrabold text-3xl md:text-4xl text-storeos-text tracking-tight">{store.name}</h1>
-              <p className="text-sm text-storeos-muted font-medium mt-1">{store.location}</p>
+              <h1 className="h-premium text-5xl md:text-7xl tracking-tighter-premium text-storeos-text leading-none italic">
+                {store.name}
+              </h1>
+              <p className="text-lg text-storeos-muted font-bold mt-4 tracking-tight group cursor-default">
+                <span className="text-storeos-amber opacity-60 mr-2">LOCATION:</span>
+                {store.location}
+              </p>
             </div>
           </div>
           
-          <div className="bg-storeos-bg border border-storeos-border rounded-2xl p-5 shadow-sm min-w-[200px]">
-            <div className="flex items-baseline gap-2 justify-end">
-              <span className="text-storeos-red font-extrabold text-4xl tabular-nums">₹{totalStoreLoss.toFixed(0)}</span>
-              <span className="text-storeos-red/60 font-bold text-sm uppercase tracking-tighter">{t('per_hour')}</span>
+          <div className="flex gap-4">
+            <div className="glass-strong p-8 min-w-[280px] relative overflow-hidden group">
+              <div className="absolute top-0 right-0 w-24 h-24 bg-storeos-red/5 blur-[40px] rounded-full translate-x-1/2 -translate-y-1/2" />
+              <div className="flex items-baseline gap-3 justify-end relative z-10">
+                <span className="h-premium text-storeos-red text-6xl text-glow-red italic">₹{totalStoreLoss.toFixed(0)}</span>
+                <span className="h-premium text-storeos-red/40 text-lg uppercase tracking-widest">{t('hr')}</span>
+              </div>
+              <div className="text-[9px] font-black text-storeos-muted uppercase tracking-[0.4em] text-right mt-2 opacity-50">{t('REALTIME_DRAIN_RATE')}</div>
             </div>
-            <div className="text-[10px] font-bold text-storeos-muted uppercase tracking-widest text-right mt-1">{t('current_drain_rate')}</div>
+            
+            <button className="hidden xl:flex items-center justify-center p-8 glass group hover:border-storeos-amber transition-all duration-500">
+               <div className="text-[10px] font-black text-storeos-amber uppercase tracking-[0.3em] rotate-90 whitespace-nowrap">{t('REPORTS')}</div>
+            </button>
           </div>
         </div>
 
-        {/* 3-Column Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          {/* LEFT — SKU Table (Responsive Container) */}
-          <div className="lg:col-span-5 order-2 lg:order-1">
-            <div className="bg-storeos-bg rounded-2xl border border-storeos-border shadow-sm p-6 overflow-hidden">
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="font-sans font-extrabold text-sm text-storeos-text tracking-tight uppercase">
-                  {t('sku_inventory')}
-                </h3>
-                <span className="text-[10px] font-bold text-storeos-muted bg-storeos-surface px-2 py-1 rounded-md border border-storeos-border">
-                  {store.skus?.length || 0} ITEMS
-                </span>
+        {/* Dense Dashboard Grid */}
+        <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
+          
+          {/* LEFT: Live Inventory Node */}
+          <div className="xl:col-span-4 order-2 xl:order-1">
+            <div className="glass p-1 rounded-2xl overflow-hidden group">
+              <div className="bg-storeos-surface/30 p-5 md:p-6">
+                <div className="flex items-center justify-between mb-10">
+                  <div>
+                    <h3 className="h-premium text-2xl text-storeos-text mb-1 italic">
+                      {t('TELEMETRY_FEED')}
+                    </h3>
+                    <p className="text-[10px] font-black text-storeos-muted uppercase tracking-[0.3em] opacity-40">SYSTEM-WIDE INVENTORY STATUS</p>
+                  </div>
+                  <div className="glass px-4 py-2 rounded-2xl flex items-center gap-3 border-storeos-border/50">
+                    <span className="h-premium text-lg text-storeos-text">{store.skus?.length || 0}</span>
+                    <span className="text-[9px] font-black text-storeos-muted tracking-widest uppercase opacity-40">ENTRIES</span>
+                  </div>
+                </div>
+                <div className="max-h-[800px] overflow-y-auto pr-2 custom-scrollbar">
+                   <SKUTable skus={store.skus || []} />
+                </div>
               </div>
-              <SKUTable skus={store.skus || []} />
             </div>
           </div>
 
-          {/* CENTER — Alerts & Intelligence */}
-          <div className="lg:col-span-4 space-y-6 order-1 lg:order-2">
-            {silentLossAlerts.length > 0 && (
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="bg-storeos-bg rounded-2xl border border-storeos-red/20 shadow-lg shadow-storeos-red/5 p-5 relative overflow-hidden"
-              >
-                <div className="absolute top-0 right-0 w-32 h-32 bg-storeos-red/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
-                <h3 className="font-sans font-extrabold text-sm text-storeos-red mb-5 flex items-center gap-2 relative z-10">
-                  <span className="w-2 h-2 rounded-full bg-storeos-red animate-pulse" />
-                  {t('silent_loss_detected').toUpperCase()}
-                </h3>
-                <div className="space-y-4 relative z-10">
-                  {silentLossAlerts.map((alert, idx) => (
-                    <AlertCard
-                      key={idx}
-                      alert={alert}
-                      onResolve={handleResolve}
-                      resolved={resolvedAlerts.has(`${alert.sku}-${alert.type}`)}
-                    />
-                  ))}
-                </div>
-              </motion.div>
-            )}
+          {/* CENTER: Cognitive Alerts & Logic */}
+          <div className="xl:col-span-5 space-y-6 order-1 xl:order-2">
+            <div className="flex flex-col gap-8">
+              {silentLossAlerts.length > 0 && (
+                <motion.div
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="glass p-8 border-l-4 border-l-storeos-red relative overflow-hidden group"
+                >
+                  <div className="absolute top-0 right-0 w-48 h-48 bg-storeos-red/5 blur-[60px] rounded-full translate-x-1/2 -translate-y-1/2 group-hover:bg-storeos-red/10 transition-colors duration-500" />
+                  
+                  <div className="flex items-center justify-between mb-8 relative z-10">
+                    <h3 className="h-premium text-xl text-storeos-red flex items-center gap-3">
+                      <span className="flex h-3 w-3 rounded-full bg-storeos-red animate-ping" />
+                      {t('SILENT_LOSS_DETECTION')}
+                    </h3>
+                    <span className="text-[9px] font-black text-storeos-red uppercase tracking-widest opacity-50">CRITICAL THREAT</span>
+                  </div>
+                  
+                  <div className="space-y-4 relative z-10">
+                    {silentLossAlerts.map((alert, idx) => (
+                      <AlertCard
+                        key={idx}
+                        alert={alert}
+                        onResolve={handleResolve}
+                        resolved={resolvedAlerts.has(`${alert.sku}-${alert.type}`)}
+                      />
+                    ))}
+                  </div>
+                </motion.div>
+              )}
 
-            {conflictAlerts.length > 0 && (
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 }}
-                className="bg-storeos-bg rounded-2xl border-2 border-storeos-amber/20 shadow-lg shadow-storeos-amber/5 p-5"
-              >
-                <h3 className="font-sans font-extrabold text-sm text-storeos-amber mb-5 flex items-center gap-2 uppercase tracking-tight">
-                  <span className="text-xl">⚠️</span> {t('decision_conflict')}
-                </h3>
-                <div className="space-y-4">
-                  {conflictAlerts.map((alert, idx) => (
-                    <AlertCard
-                      key={idx}
-                      alert={alert}
-                      onResolve={handleResolve}
-                      resolved={resolvedAlerts.has(`${alert.sku}-${alert.type}`)}
-                    />
-                  ))}
-                </div>
-              </motion.div>
-            )}
+              {conflictAlerts.length > 0 && (
+                <motion.div
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.2 }}
+                  className="glass p-8 border-l-4 border-l-storeos-amber relative overflow-hidden group"
+                >
+                  <div className="absolute top-0 right-0 w-48 h-48 bg-storeos-amber/5 blur-[60px] rounded-full translate-x-1/2 -translate-y-1/2" />
+                  <h3 className="h-premium text-xl text-storeos-amber mb-8 flex items-center gap-3 uppercase italic">
+                    <span className="text-xl">!</span> {t('DECISION_CONFLICT')}
+                  </h3>
+                  <div className="space-y-4 relative z-10">
+                    {conflictAlerts.map((alert, idx) => (
+                      <AlertCard
+                        key={idx}
+                        alert={alert}
+                        onResolve={handleResolve}
+                        resolved={resolvedAlerts.has(`${alert.sku}-${alert.type}`)}
+                      />
+                    ))}
+                  </div>
+                </motion.div>
+              )}
 
-            {expiryAlerts.length > 0 && (
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 }}
-                className="bg-storeos-bg rounded-2xl border border-storeos-border shadow-sm p-5"
-              >
-                <h3 className="font-sans font-extrabold text-sm text-storeos-text mb-5 flex items-center gap-2 uppercase">
-                  <span className="text-lg">⏰</span> {t('action_timer').toUpperCase()}
-                </h3>
-                <div className="space-y-4">
-                  {expiryAlerts.map((alert, idx) => (
-                    <AlertCard
-                      key={idx}
-                      alert={alert}
-                      onResolve={handleResolve}
-                      resolved={resolvedAlerts.has(`${alert.sku}-${alert.type}`)}
-                    />
-                  ))}
-                </div>
-              </motion.div>
-            )}
+              {expiryAlerts.length > 0 && (
+                <motion.div
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3 }}
+                  className="glass p-8 border-l-4 border-l-storeos-cold"
+                >
+                  <h3 className="h-premium text-xl text-storeos-text mb-8 flex items-center gap-3 uppercase italic">
+                    <span className="text-xl">⌛</span> {t('EXPIRY_TELEMETRY')}
+                  </h3>
+                  <div className="space-y-4">
+                    {expiryAlerts.map((alert, idx) => (
+                      <AlertCard
+                        key={idx}
+                        alert={alert}
+                        onResolve={handleResolve}
+                        resolved={resolvedAlerts.has(`${alert.sku}-${alert.type}`)}
+                      />
+                    ))}
+                  </div>
+                </motion.div>
+              )}
 
-            {silentLossAlerts.length === 0 && conflictAlerts.length === 0 && expiryAlerts.length === 0 && (
-              <div className="bg-storeos-green/5 rounded-2xl border border-storeos-green/10 p-12 text-center">
-                <div className="w-16 h-16 bg-storeos-green/10 rounded-full flex items-center justify-center mx-auto mb-4 text-storeos-green text-2xl">✓</div>
-                <div className="text-storeos-green font-bold text-sm tracking-tight">{t('all_systems_optimal')}</div>
-                <p className="text-xs text-storeos-muted mt-2 tracking-wide uppercase">{t('no_active_alerts')}</p>
-              </div>
-            )}
+              {silentLossAlerts.length === 0 && conflictAlerts.length === 0 && expiryAlerts.length === 0 && (
+                <div className="glass-strong p-16 text-center group transition-all duration-700">
+                  <div className="w-24 h-24 bg-emerald-500/10 rounded-[2.5rem] flex items-center justify-center mx-auto mb-8 text-emerald-500 text-4xl group-hover:rotate-12 transition-transform duration-500 shadow-inner">✓</div>
+                  <h3 className="h-premium text-2xl text-emerald-500 mb-2 italic">STATUS: OPTIMAL</h3>
+                  <p className="text-[10px] font-black text-storeos-muted tracking-[0.4em] uppercase opacity-40">All intelligence nodes synchronized</p>
+                </div>
+              )}
+            </div>
           </div>
 
-          {/* RIGHT — Cold Storage & Metrics */}
-          <div className="lg:col-span-3 space-y-6 order-3">
+          {/* RIGHT: Operational Sensors & Global Metrics */}
+          <div className="xl:col-span-3 space-y-8 order-3">
             <ColdStoragePanel store={store} />
 
-            <div className="bg-storeos-bg rounded-2xl border border-storeos-border shadow-sm p-6">
-              <h3 className="font-sans font-extrabold text-sm text-storeos-text mb-6 uppercase tracking-tight">{t('store_metrics')}</h3>
-              <div className="space-y-5">
+            <div className="glass p-8 group overflow-hidden relative">
+               <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-storeos-amber/40 to-transparent" />
+               <h3 className="h-premium text-xl text-storeos-text mb-10 uppercase italic tracking-tighter">{t('CORE_SYSTEMS')}</h3>
+               
+               <div className="space-y-8 relative z-10">
                 {[
                   { label: t('orders_per_hour'), value: store.ordersPerHour, color: 'text-storeos-cold' },
-                  { label: t('profitability'), value: `${store.profitabilityScore}%`, color: store.profitabilityScore > 60 ? 'text-storeos-green' : 'text-storeos-amber' },
+                  { label: t('profitability'), value: `${store.profitabilityScore}%`, color: store.profitabilityScore > 60 ? 'text-emerald-500' : 'text-storeos-amber' },
                   { label: t('active_alerts'), value: store.alerts?.length || 0, color: store.alerts?.length > 3 ? 'text-storeos-red' : 'text-storeos-text' },
                   { label: t('items_expiring'), value: store.itemsExpiringSoon || 0, color: 'text-storeos-amber' },
                 ].map((m, i) => (
-                  <div key={i} className="flex justify-between items-center group">
-                    <span className="text-xs font-medium text-storeos-muted group-hover:text-storeos-text transition-colors uppercase tracking-widest text-[10px]">{m.label}</span>
-                    <span className={`text-sm font-bold font-mono tracking-tighter ${m.color}`}>{m.value}</span>
+                  <div key={i} className="group/item flex flex-col gap-2">
+                    <div className="flex justify-between items-end">
+                      <span className="text-[10px] font-black text-storeos-muted uppercase tracking-[0.2em] opacity-50 group-hover/item:opacity-100 transition-opacity">{m.label}</span>
+                      <span className={`h-premium text-3xl tabular-nums ${m.color}`}>{m.value}</span>
+                    </div>
+                    <div className="h-0.5 w-full bg-storeos-border/20 rounded-full overflow-hidden">
+                       <motion.div 
+                         initial={{ width: 0 }}
+                         animate={{ width: typeof m.value === 'string' ? m.value : '50%' }}
+                         className={`h-full ${m.color.replace('text-', 'bg-')}`} 
+                       />
+                    </div>
                   </div>
                 ))}
               </div>
               
-              <div className="mt-6 pt-6 border-t border-storeos-border">
-                <button className="w-full py-3 bg-storeos-surface border border-storeos-border text-storeos-text text-xs font-bold rounded-xl hover:bg-storeos-bg hover:border-storeos-amber transition-all uppercase tracking-widest">
-                  {t('generate_report')}
+              <div className="mt-12 pt-10 border-t border-storeos-border/30">
+                <button className="w-full h-16 bg-white text-[#020617] h-premium text-sm uppercase tracking-[0.3em] rounded-3xl hover:bg-amber-500 hover:text-white transition-all duration-500 shadow-2xl active:scale-95 group">
+                  {t('EMBEDDED_AGENT')}
+                  <span className="block text-[8px] opacity-50 group-hover:opacity-100 transition-opacity">PROMPT HANDOVER INITIATED</span>
                 </button>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      </main>
     </div>
   )
 }

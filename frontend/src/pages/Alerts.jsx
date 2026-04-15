@@ -66,8 +66,9 @@ export default function Alerts() {
   return (
     <div className="min-h-screen bg-storeos-surface transition-colors duration-500">
       <TopBar demoMode={demoMode} />
+      <div className="h-[90px] w-full" /> {/* Bulletproof Header Spacer */}
 
-      <div className="p-4 md:p-6 lg:p-8 max-w-7xl mx-auto">
+      <div className="px-8 md:px-16 lg:px-20 py-8 max-w-[1440px] mx-auto">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
           <div>
             <div className="flex items-center gap-2 mb-1">
@@ -97,7 +98,7 @@ export default function Alerts() {
           <div className="flex flex-col lg:flex-row lg:items-center gap-8">
             <div className="flex flex-col gap-3">
               <span className="text-[10px] font-bold text-storeos-muted uppercase tracking-widest">{t('filter_by_store')}</span>
-              <div className="flex flex-wrap bg-storeos-surface rounded-xl p-1 border border-storeos-border">
+              <div className="flex flex-wrap gap-1 bg-storeos-surface rounded-xl p-1.5 border border-storeos-border">
                 <button
                   onClick={() => setFilter('all')}
                   className={`px-4 py-2 text-xs font-bold rounded-lg transition-all ${filter === 'all' ? 'bg-storeos-bg text-storeos-text shadow-md' : 'text-storeos-muted hover:text-storeos-text'}`}
@@ -118,7 +119,7 @@ export default function Alerts() {
 
             <div className="flex flex-col gap-3">
               <span className="text-[10px] font-bold text-storeos-muted uppercase tracking-widest">{t('priority_level')}</span>
-              <div className="flex bg-storeos-surface rounded-xl p-1 border border-storeos-border">
+              <div className="flex gap-1 bg-storeos-surface rounded-xl p-1.5 border border-storeos-border">
                 {['all', 'critical', 'warning'].map(sev => (
                   <button
                     key={sev}
@@ -150,7 +151,7 @@ export default function Alerts() {
               <p className="text-sm text-storeos-muted mt-2 uppercase tracking-widest">No signals matching current protocol</p>
             </motion.div>
           ) : (
-            <div className="grid grid-cols-1 gap-4">
+            <div className="grid grid-cols-1 gap-5">
               {filteredAlerts.map((alert, idx) => (
                 <motion.div
                   key={idx}

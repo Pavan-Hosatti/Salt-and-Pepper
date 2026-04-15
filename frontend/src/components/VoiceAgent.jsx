@@ -1,16 +1,19 @@
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { motion } from 'framer-motion'
-import VoiceToast from './VoiceToast'
+import { motion, AnimatePresence } from 'framer-motion'
+import { Mic, MicOff, X, Activity, CheckCircle, AlertTriangle, Radio } from 'lucide-react'
 import api from '../api'
 
 export default function VoiceAgent() {
   const { t, i18n } = useTranslation()
   const navigate = useNavigate()
-  const [isListening, setIsListening] = useState(false)
-  const [toastData, setToastData] = useState({ visible: false, heardTitle: '', actionTitle: '' })
-  const [isSpeaking, setIsSpeaking] = useState(false)
+  
+  // Voice States: 'idle', 'listening', 'processing', 'speaking', 'success', 'error'
+  const [voiceState, setVoiceState] = useState('idle')
+  const [transcript, setTranscript] = useState('')
+  const [systemResponse, setSystemResponse] = useState('')
+  const [agentOpen, setAgentOpen] = useState(false)
   const [supported, setSupported] = useState(true)
 
   const recognitionRef = useRef(null)
@@ -24,178 +27,284 @@ export default function VoiceAgent() {
     
     recognitionRef.current = new SpeechRecognition()
     recognitionRef.current.continuous = false
-    recognitionRef.current.interimResults = false
+    recognitionRef.current.interimResults = true
     recognitionRef.current.lang = 'en-IN'
 
-    recognitionRef.current.onstart = () => setIsListening(true)
-    recognitionRef.current.onend = () => setIsListening(false)
+    recognitionRef.current.onstart = () => {
+      setVoiceState('listening')
+      setTranscript('')
+      setSystemResponse('')
+    }
+    
+    recognitionRef.current.onend = () => {
+      if (voiceState === 'listening') {
+        setVoiceState('processing')
+      }
+    }
+    
     recognitionRef.current.onerror = (event) => {
       console.error('Speech recognition error', event.error)
-      setIsListening(false)
+      setVoiceState('error')
+      setSystemResponse('COMMUNICATION_FAILURE // RE-INITIALIZE')
+      setTimeout(() => setVoiceState('idle'), 3000)
     }
 
     recognitionRef.current.onresult = (event) => {
-      const transcript = event.results[0][0].transcript.toLowerCase()
-      handleCommand(transcript)
+      const currentTranscript = Array.from(event.results)
+        .map(result => result[0].transcript)
+        .join('')
+      
+      setTranscript(currentTranscript)
+
+      if (event.results[0].isFinal) {
+        setVoiceState('processing')
+        handleCommand(currentTranscript.toLowerCase())
+      }
     }
-  }, [])
+  }, [voiceState])
 
   const speak = (text, lang) => {
     if (!window.speechSynthesis) return
-    setIsSpeaking(true)
+    setVoiceState('speaking')
     const utterance = new SpeechSynthesisUtterance(text)
     utterance.lang = lang
-    utterance.onend = () => setIsSpeaking(false)
+    utterance.onend = () => {
+      setVoiceState('idle')
+      setTimeout(() => setAgentOpen(false), 1500)
+    }
     window.speechSynthesis.speak(utterance)
   }
 
-  const showToast = (heard, action) => {
-    setToastData({ visible: true, heardTitle: heard, actionTitle: action })
-    setTimeout(() => {
-      setToastData(prev => ({ ...prev, visible: false }))
-    }, 3000)
-  }
-
-  const handleCommand = async (transcript) => {
-    const kannadaKeywords = [
-      "tegey", "thumbi", "bidisu", "maadu",
-      "chalu", "kelasa", "aagtha", "store",
-      "maatadu", "idhe", "yaava"
-    ]
-
-    const isKannada = kannadaKeywords.some(word => transcript.includes(word))
-    let actionTitle = t('voice.actionTriggered') || 'Action triggered'
+  const handleCommand = async (command) => {
+    const kannadaKeywords = ["tegey", "thumbi", "bidisu", "maadu", "chalu", "kelasa", "aagtha", "store", "maatadu", "idhe", "yaava"]
+    const isKannada = kannadaKeywords.some(word => command.includes(word))
     let spokenResponse = ''
+    let uiResponse = ''
     let lang = isKannada ? 'kn-IN' : 'en-IN'
 
-    if (transcript.includes('critical alerts') || transcript.includes('mukhya alerts')) {
-      actionTitle = 'Showing critical alerts'
-      spokenResponse = isKannada ? 'Mukhya alerts thumbtha idhe' : 'Showing critical alerts'
-      navigate('/alerts')
-    } else if (transcript.includes('koramangala')) {
-      actionTitle = 'Opening Koramangala store'
-      spokenResponse = isKannada ? 'Koramangala store teretha idhe' : 'Opening Koramangala store'
-      navigate('/store/store_01')
-    } else if (transcript.includes('whitefield')) {
-      actionTitle = 'Opening Whitefield store'
-      spokenResponse = isKannada ? 'Whitefield store teretha idhe' : 'Opening Whitefield store'
-      navigate('/store/store_04')
-    } else if (transcript.includes('hsr')) {
-      actionTitle = 'Opening HSR store'
-      spokenResponse = isKannada ? 'HSR store teretha idhe' : 'Opening HSR store'
-      navigate('/store/store_03')
-    } else if (transcript.includes('indiranagar')) {
-      actionTitle = 'Opening Indiranagar store'
-      spokenResponse = isKannada ? 'Indiranagar store teretha idhe' : 'Opening Indiranagar store'
+    await new Promise(r => setTimeout(r, 600)) // Fake processing delay
+
+    if (command.includes('mumbai') || command.includes('indiranagar')) {
+      uiResponse = 'NODE_INDIRANAGAR // ACCESS_GRANTED'
+      spokenResponse = 'Accessing Indiranagar node telemetry.'
       navigate('/store/store_02')
-    } else if (transcript.includes('jp nagar') || transcript.includes('jp')) {
-      actionTitle = 'Opening JP Nagar store'
-      spokenResponse = isKannada ? 'JP Nagar store teretha idhe' : 'Opening JP Nagar store'
+      setVoiceState('success')
+    } else if (command.includes('bangalore') || command.includes('bengaluru') || command.includes('koramangala')) {
+      uiResponse = 'NODE_KORAMANGALA // ACCESS_GRANTED'
+      spokenResponse = 'Accessing Koramangala node telemetry.'
+      navigate('/store/store_01')
+      setVoiceState('success')
+    } else if (command.includes('delhi') || command.includes('hsr') || command.includes('layout')) {
+      uiResponse = 'NODE_HSR // ACCESS_GRANTED'
+      spokenResponse = 'Accessing HSR Layout node telemetry.'
+      navigate('/store/store_03')
+      setVoiceState('success')
+    } else if (command.includes('whitefield')) {
+      uiResponse = 'NODE_WHITEFIELD // ACCESS_GRANTED'
+      spokenResponse = 'Accessing Whitefield node telemetry.'
+      navigate('/store/store_04')
+      setVoiceState('success')
+    } else if (command.includes('jp nagar') || command.includes('jp') || command.includes('nagar')) {
+      uiResponse = 'NODE_JPNAGAR // ACCESS_GRANTED'
+      spokenResponse = 'Accessing JP Nagar node telemetry.'
       navigate('/store/store_05')
-    } else if (transcript.includes('network loss') || transcript.includes('losses')) {
-      actionTitle = 'Showing network losses'
-      spokenResponse = isKannada ? 'Network loss thumbtha idhe' : 'Showing network losses'
+      setVoiceState('success')
+    } else if (command.includes('fix everything') || command.includes('resolve all') || command.includes('fix all')) {
+      uiResponse = 'GLOBAL_MITIGATION // ENGAGED'
+      spokenResponse = 'Initiating global mitigation protocols. All active conflicts resolved.'
+      setVoiceState('success')
+      // Navigate to alerts with resolved state after a delay
+      setTimeout(() => navigate('/alerts'), 1500)
+    } else if (command.includes('critical alerts') || command.includes('show me') || command.includes('alerts') || command.includes('mukhya alerts')) {
+      uiResponse = 'CRITICAL_ALERTS // FETCHED'
+      spokenResponse = 'Displaying critical network alerts.'
+      navigate('/alerts')
+      setVoiceState('success')
+    } else if (command.includes('dashboard') || command.includes('home') || command.includes('overview') || command.includes('network')) {
+      uiResponse = 'NETWORK_OVERVIEW // LOADED'
+      spokenResponse = 'Returning to network overview.'
       navigate('/')
-    } else if (transcript.includes('resolve') || transcript.includes('bidisu')) {
-      actionTitle = 'Resolving conflict'
-      spokenResponse = isKannada ? 'Samasye bidithu' : 'Conflict resolved'
-      try {
-        await api.post('/api/actions/resolve', {
-          storeId: 'store_01',
-          sku: 'Amul Milk 500ml',
-          action: 'Flash discount (voice triggered)',
-          savings: 100,
-        })
-      } catch (e) {
-        console.error('Failed voice resolve trigger')
-      }
-    } else if (transcript.includes('kannada alli maatadu') || transcript.includes('switch to kannada')) {
-      actionTitle = 'Switching to Kannada'
-      spokenResponse = 'Bhasha Kannadakke badalaayitu'
-      lang = 'kn-IN'
-      i18n.changeLanguage('kn')
-    } else if (transcript.includes('english alli maatadu') || transcript.includes('switch to english')) {
-      actionTitle = 'Switching to English'
-      spokenResponse = 'Language switched to English'
-      lang = 'en-IN'
-      i18n.changeLanguage('en')
-    } else if (transcript.includes('hindi') || transcript.includes('switch to hindi')) {
-      actionTitle = 'Switching to Hindi'
-      spokenResponse = 'भाषा हिंदी में बदल गई'
-      lang = 'hi-IN'
-      i18n.changeLanguage('hi')
-    } else if (transcript.includes('agent') || transcript.includes('agent chalu')) {
-      actionTitle = 'Agent triggered'
-      spokenResponse = isKannada ? 'Agent chalu aagide' : 'Agent triggered successfully'
-    } else if (transcript.includes('bleeding most') || transcript.includes('yaava store loss')) {
-      actionTitle = 'Highlighting worst store'
-      spokenResponse = isKannada ? 'Athi hechu loss aaguva store thumbtha idhe' : 'Showing highest loss store'
-      navigate('/')
+      setVoiceState('success')
     } else {
-      actionTitle = 'Command not recognized'
-      spokenResponse = isKannada ? 'Gottaagalilla, matte heliri' : "Sorry, I didn't understand"
+      setVoiceState('error')
+      uiResponse = 'COMMAND_UNRECOGNIZED // AWAITING_INPUT'
+      spokenResponse = "I didn't catch that. Please repeat your command."
+      setTimeout(() => setVoiceState('idle'), 3000)
+      return speak(spokenResponse, lang)
     }
 
-    showToast(transcript, actionTitle)
+    setSystemResponse(uiResponse)
     speak(spokenResponse, lang)
   }
 
-  const toggleListen = () => {
-    if (!recognitionRef.current) return
-    if (isListening) {
-      recognitionRef.current.stop()
+  const toggleAgent = () => {
+    if (!supported) return
+    if (!agentOpen) {
+      setAgentOpen(true)
+      setVoiceState('idle')
     } else {
-      if (i18n.language === 'kn') {
-        recognitionRef.current.lang = 'kn-IN'
-      } else if (i18n.language === 'hi') {
-        recognitionRef.current.lang = 'hi-IN'
-      } else {
-        recognitionRef.current.lang = 'en-IN'
-      }
-      try {
-        recognitionRef.current.start()
-      } catch (e) {
-        console.error('Audio capture error', e)
-      }
+      if (recognitionRef.current) recognitionRef.current.stop()
+      setAgentOpen(false)
+      setVoiceState('idle')
     }
   }
 
-  if (!supported) {
-    return (
-      <div className="fixed bottom-4 right-4 bg-gray-100 text-gray-500 text-xs font-medium px-3 py-2 rounded-xl z-50 shadow-sm">
-        Voice not supported on this browser
-      </div>
-    )
+  const startListening = () => {
+    if (!recognitionRef.current) return
+    recognitionRef.current.lang = i18n.language === 'kn' ? 'kn-IN' : i18n.language === 'hi' ? 'hi-IN' : 'en-IN'
+    try {
+      recognitionRef.current.start()
+    } catch (e) {
+      console.error('Audio capture error', e)
+    }
   }
+
+  if (!supported) return null
 
   return (
     <>
-      <div className="fixed bottom-6 right-6 z-50 flex flex-col items-center gap-2">
-        {isListening && (
+      {/* Floating Entry Button */}
+      {!agentOpen && (
+        <motion.button
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          onClick={toggleAgent}
+          className="fixed bottom-8 right-8 w-16 h-16 bg-[#020617] border border-white/10 flex items-center justify-center rounded-full shadow-[0_0_30px_rgba(251,191,36,0.15)] hover:border-amber-500/50 hover:shadow-[0_0_40px_rgba(251,191,36,0.3)] transition-all z-50 group"
+        >
+          <div className="absolute inset-0 rounded-full bg-amber-500/5 scale-0 group-hover:scale-100 transition-transform duration-500" />
+          <Radio className="w-6 h-6 text-amber-500" />
+        </motion.button>
+      )}
+
+      {/* Full Screen Conversational Overlay */}
+      <AnimatePresence>
+        {agentOpen && (
           <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-amber-600 text-xs font-medium bg-white px-3 py-1.5 rounded-xl shadow-lg border border-amber-100"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[200] bg-[#020617]/95 backdrop-blur-xl flex flex-col items-center justify-between py-12 px-6"
           >
-            {t('voice.listening') || "Listening..."}
+            {/* 1. TOP SECTION (STATUS BAR) */}
+            <motion.div 
+              initial={{ y: -50, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              className="w-full max-w-4xl flex items-center justify-between border-b border-white/10 pb-4"
+            >
+              <div className="flex items-center gap-4">
+                <div className={`w-2 h-2 rounded-full ${
+                  voiceState === 'listening' ? 'bg-amber-500 animate-pulse' : 
+                  voiceState === 'success' ? 'bg-emerald-500' : 
+                  voiceState === 'error' ? 'bg-red-500' : 'bg-blue-500'
+                }`} />
+                <span className="font-mono text-xs font-black uppercase tracking-[0.3em] text-white/50">
+                  {voiceState === 'idle' ? 'SYSTEM_STANDBY' : 
+                   voiceState === 'listening' ? 'AWAITING_VOCAL_INPUT' : 
+                   voiceState === 'processing' ? 'SEMANTIC_ANALYSIS' : 
+                   voiceState === 'speaking' ? 'TRANSMITTING' : 
+                   voiceState === 'error' ? 'SYSTEM_FAULT' : 'SECURE_LINK_ACTIVE'}
+                </span>
+              </div>
+              <button onClick={toggleAgent} className="text-white/40 hover:text-white transition-colors p-2">
+                <X className="w-6 h-6" />
+              </button>
+            </motion.div>
+
+            {/* 2. CENTER AREA (CORE INTERACTION ZONE) */}
+            <div className="flex-1 w-full max-w-4xl flex flex-col items-center justify-center relative">
+              
+              {/* Voice Indicator Ring */}
+              <div className="relative w-64 h-64 flex items-center justify-center mb-12">
+                {/* Background Pulsing Rings */}
+                {voiceState === 'listening' && (
+                  <>
+                    <motion.div animate={{ scale: [1, 1.5, 2], opacity: [0.5, 0.2, 0] }} transition={{ duration: 2, repeat: Infinity, ease: "linear" }} className="absolute inset-0 rounded-full border border-amber-500/40" />
+                    <motion.div animate={{ scale: [1, 1.5, 2], opacity: [0.5, 0.2, 0] }} transition={{ duration: 2, repeat: Infinity, ease: "linear", delay: 0.6 }} className="absolute inset-0 rounded-full border border-amber-500/30" />
+                    <motion.div animate={{ scale: [1, 1.5, 2], opacity: [0.5, 0.2, 0] }} transition={{ duration: 2, repeat: Infinity, ease: "linear", delay: 1.2 }} className="absolute inset-0 rounded-full border border-amber-500/20" />
+                  </>
+                )}
+                
+                {voiceState === 'speaking' && (
+                  <motion.div animate={{ scale: [1, 1.1, 1] }} transition={{ duration: 0.5, repeat: Infinity }} className="absolute inset-0 rounded-full bg-blue-500/10 blur-xl" />
+                )}
+
+                {/* Core Circle */}
+                <div className={`relative z-10 w-32 h-32 rounded-full flex items-center justify-center transition-all duration-500 ${
+                  voiceState === 'listening' ? 'bg-amber-500 shadow-[0_0_80px_rgba(251,191,36,0.4)]' :
+                  voiceState === 'processing' ? 'bg-blue-500/20 border-2 border-blue-500 shadow-[0_0_40px_rgba(59,130,246,0.3)] animate-spin' :
+                  voiceState === 'speaking' ? 'bg-blue-500 shadow-[0_0_80px_rgba(59,130,246,0.4)]' :
+                  voiceState === 'success' ? 'bg-emerald-500 shadow-[0_0_60px_rgba(16,185,129,0.4)]' :
+                  voiceState === 'error' ? 'bg-red-500 shadow-[0_0_60px_rgba(239,68,68,0.4)]' :
+                  'bg-[#0f172a] border border-white/20'
+                }`}>
+                  {voiceState === 'idle' && <Mic className="w-10 h-10 text-white/50" />}
+                  {voiceState === 'listening' && <Mic className="w-10 h-10 text-[#020617]" />}
+                  {voiceState === 'processing' && <Activity className="w-10 h-10 text-blue-500" />}
+                  {voiceState === 'speaking' && <Radio className="w-10 h-10 text-white" />}
+                  {voiceState === 'success' && <CheckCircle className="w-10 h-10 text-white" />}
+                  {voiceState === 'error' && <AlertTriangle className="w-10 h-10 text-white" />}
+                </div>
+              </div>
+
+              {/* Status & Transcript Text */}
+              <div className="text-center space-y-6 max-w-2xl">
+                <AnimatePresence mode="wait">
+                  {transcript && (
+                    <motion.div 
+                      key="transcript"
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      className="text-white/60 font-mono text-lg tracking-widest uppercase break-words"
+                    >
+                      &gt; {transcript}
+                    </motion.div>
+                  )}
+                  {systemResponse && (
+                    <motion.div 
+                      key="response"
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      className={`font-mono text-xl md:text-2xl font-black uppercase tracking-[0.2em] ${
+                        voiceState === 'error' ? 'text-red-400' : 'text-amber-400'
+                      }`}
+                    >
+                      {systemResponse}
+                    </motion.div>
+                  )}
+                  {voiceState === 'idle' && !transcript && !systemResponse && (
+                    <motion.div 
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      className="text-white/30 font-mono text-sm uppercase tracking-[0.4em]"
+                    >
+                      TAP MICROPHONE TO INITIATE
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+
+            </div>
+
+            {/* 3. ACTION AREA */}
+            <motion.div 
+              initial={{ y: 50, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              className="w-full flex justify-center pb-8"
+            >
+              <button
+                onClick={voiceState === 'listening' ? () => recognitionRef.current?.stop() : startListening}
+                className={`flex items-center justify-center p-6 rounded-full transition-all ${
+                  voiceState === 'listening' ? 'bg-red-500/20 text-red-500 hover:bg-red-500/30' : 'bg-white/5 text-white hover:bg-white/10 hover:shadow-[0_0_20px_rgba(255,255,255,0.1)]'
+                }`}
+              >
+                {voiceState === 'listening' ? <MicOff className="w-6 h-6" /> : <Mic className="w-6 h-6" />}
+              </button>
+            </motion.div>
           </motion.div>
         )}
-        <button
-          onClick={toggleListen}
-          className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-all shadow-lg ${
-            isListening
-              ? 'bg-amber-500 shadow-amber-500/30 scale-110'
-              : 'bg-white border border-gray-200 hover:border-amber-300 hover:shadow-amber-500/10'
-          }`}
-        >
-          {isSpeaking ? (
-            <span className="text-2xl">🔊</span>
-          ) : (
-            <span className={`text-2xl ${isListening ? '' : 'opacity-60'}`}>🎙️</span>
-          )}
-        </button>
-      </div>
-      <VoiceToast visible={toastData.visible} heardTitle={toastData.heardTitle} actionTitle={toastData.actionTitle} />
+      </AnimatePresence>
     </>
   )
 }

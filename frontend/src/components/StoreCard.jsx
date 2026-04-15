@@ -1,82 +1,74 @@
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { motion } from 'framer-motion'
+import { Activity, Shield, ArrowUpRight } from 'lucide-react'
 
 export default function StoreCard({ store, index }) {
   const navigate = useNavigate()
   const { t } = useTranslation()
 
   const riskLevel = store.coldStorageRiskScore >= 7 ? 'critical' : store.coldStorageRiskScore >= 4 ? 'warning' : 'normal'
-  const riskColor = riskLevel === 'critical' ? 'text-red-500' : riskLevel === 'warning' ? 'text-amber-500' : 'text-emerald-500'
-  const riskBg = riskLevel === 'critical' ? 'bg-red-500' : riskLevel === 'warning' ? 'bg-amber-500' : 'bg-emerald-500'
+  const nodeShortId = store.name.split('-')[1]?.trim() || `NODE-${index + 1}`
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 15 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.05, duration: 0.4 }}
+      transition={{ delay: index * 0.05 }}
       onClick={() => navigate(`/store/${store._id}`)}
-      className="bg-storeos-bg rounded-2xl border border-storeos-border shadow-sm hover:shadow-xl hover:shadow-storeos-amber/10 cursor-pointer transition-all duration-300 hover:-translate-y-1 group overflow-hidden"
+      className="glass-strong group hover:border-storeos-amber/50 cursor-pointer transition-all duration-700 relative overflow-hidden"
     >
-      <div className="p-6">
-        <div className="flex justify-between items-start mb-5">
-          <div>
-            <div className="flex items-center gap-2 mb-1">
-              <div className={`w-2 h-2 rounded-full ${riskLevel === 'critical' ? 'bg-storeos-red animate-pulse' : 'bg-storeos-green'}`} />
-              <span className="text-[10px] font-semibold text-storeos-muted uppercase tracking-wider">Node {index + 1}</span>
+      {/* Narrative Gradient Header */}
+      <div className={`h-1.5 w-full ${riskLevel === 'critical' ? 'bg-storeos-red' : riskLevel === 'warning' ? 'bg-storeos-amber' : 'bg-emerald-500'
+        }`} />
+
+      <div className="p-5 md:p-7 flex flex-col h-full justify-between min-h-[220px]">
+        <div className="flex justify-between items-start mb-6">
+          <div className="space-y-4">
+            <div className="flex items-center gap-3">
+              <div className="px-2 py-1 rounded-lg bg-storeos-surface/50 border border-storeos-border flex items-center gap-2">
+                <Shield className="w-3 h-3 text-storeos-muted opacity-50" />
+                <span className="text-[10px] font-black text-storeos-muted uppercase tracking-[0.2em]">{nodeShortId}</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <span className={`w-1.5 h-1.5 rounded-full ${riskLevel === 'critical' ? 'bg-storeos-red animate-pulse' : 'bg-emerald-500'}`} />
+                <span className="text-[9px] font-black text-storeos-muted uppercase tracking-widest opacity-50">SYNCED</span>
+              </div>
             </div>
-            <h3 className="font-sans font-bold text-xl text-storeos-text group-hover:text-storeos-amber transition-colors">
-              {store.name}
+
+            <h3 className="h-premium text-xl md:text-2xl text-storeos-text group-hover:text-storeos-amber transition-colors italic tracking-tighter-premium truncate">
+              {store.name.split('-')[0]}
             </h3>
-            <p className="text-xs text-storeos-muted mt-0.5">{store.location}</p>
+            <p className="text-[9px] font-bold text-storeos-muted uppercase tracking-widest opacity-60 truncate">
+              {store.location}
+            </p>
           </div>
-          <div className="text-right">
-            <div className="text-2xl font-bold text-storeos-red">
-              ₹{store.lossPerHour?.toFixed(0) || 0}
+
+          <div className="text-right flex-shrink-0">
+            <div className={`h-premium text-2xl md:text-3xl leading-none ${riskLevel === 'critical' ? 'text-storeos-red text-glow-red' : 'text-storeos-text'}`}>
+              ₹{store.lossPerHour}
             </div>
-            <div className="text-[10px] font-medium text-storeos-muted">{t('loss_per_hour')}</div>
+            <p className="text-[8px] md:text-[9px] font-black text-storeos-muted uppercase tracking-widest mt-1.5 opacity-50">{t('DRAIN_RATE')}</p>
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-3 mb-5">
-          <div className="bg-storeos-surface rounded-xl px-4 py-3 border border-storeos-border">
-            <div className="text-[10px] font-medium text-storeos-muted mb-1">{t('active_alerts')}</div>
-            <div className={`text-xl font-bold font-mono ${store.activeAlerts > 3 ? 'text-storeos-red' : 'text-storeos-text'}`}>
-              {String(store.activeAlerts).padStart(2, '0')}
+        <div className="grid grid-cols-2 gap-6 mb-8">
+          <div className="space-y-2">
+            <p className="text-[9px] font-black text-storeos-muted uppercase tracking-widest opacity-40">{t('SIGNAL_COUNT')}</p>
+            <div className="flex items-center gap-3">
+              <span className={`h-premium text-2xl ${store.activeAlerts > 0 ? 'text-storeos-red' : 'text-storeos-text'}`}>{store.activeAlerts}</span>
+              <Activity className={`w-4 h-4 ${store.activeAlerts > 0 ? 'text-storeos-red animate-pulse' : 'text-storeos-muted opacity-20'}`} />
             </div>
           </div>
-          <div className="bg-storeos-surface rounded-xl px-4 py-3 border border-storeos-border">
-            <div className="text-[10px] font-medium text-storeos-muted mb-1">{t('orders_per_hour')}</div>
-            <div className="text-xl font-bold font-mono text-storeos-cold">
-              {String(store.ordersPerHour).padStart(2, '0')}
-            </div>
+          <div className="space-y-2">
+            <p className="text-[9px] font-black text-storeos-muted uppercase tracking-widest opacity-40">{t('PROFITABILITY')}</p>
+            <span className="h-premium text-2xl text-emerald-500">{store.profitabilityScore}%</span>
           </div>
         </div>
 
-        <div className="space-y-3">
-          <div>
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-[10px] font-medium text-storeos-muted">{t('cold_storage_risk')}</span>
-              <span className={`text-[10px] font-bold uppercase ${riskColor}`}>{riskLevel}</span>
-            </div>
-            <div className="flex gap-1 h-2">
-              {Array.from({ length: 10 }).map((_, i) => (
-                <div
-                  key={i}
-                  className={`flex-1 h-full rounded-full ${
-                    i < store.coldStorageRiskScore 
-                      ? (riskLevel === 'critical' ? 'bg-storeos-red' : 'bg-storeos-amber')
-                      : 'bg-storeos-border'
-                  }`}
-                />
-              ))}
-            </div>
-          </div>
-          
-          <div className="flex justify-between items-center pt-2 border-t border-storeos-border">
-            <span className="text-[10px] font-medium text-storeos-muted">{t('profitability')}</span>
-            <span className={`text-sm font-bold ${store.profitabilityScore > 60 ? 'text-storeos-green' : 'text-storeos-amber'}`}>{store.profitabilityScore}%</span>
-          </div>
+        <div className="pt-5 border-t border-storeos-border/30 flex items-center justify-between group/btn mt-auto">
+          <span className="text-[8px] md:text-[9px] font-black text-storeos-muted uppercase tracking-[0.2em] group-hover/btn:text-storeos-amber transition-colors truncate">OPERATIONAL_NODE_DETAIL</span>
+          <ArrowUpRight className="w-4 h-4 text-storeos-muted group-hover/btn:translate-x-1 group-hover/btn:-translate-y-1 group-hover/btn:text-storeos-amber transition-all flex-shrink-0" />
         </div>
       </div>
     </motion.div>
