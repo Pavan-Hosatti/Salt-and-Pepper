@@ -91,6 +91,40 @@ export const MOCK_STORES = [
     alerts: [
       { type: 'conflict', sku: 'SKU-LOG-99', storeName: 'JP Nagar', severity: 'warning', message: 'Logistics delay detected: Supplier sync mismatch (4hr gap).', recommendation: 'Trigger Secondary Sourcing', savedIfFollowed: 15400, lostIfIgnored: 22000, storeId: 'store_05', timeRemaining: 4, shelfSlot: 'Inbound Bay' },
     ]
+  },
+  {
+    _id: 'store_06',
+    name: 'BTM Layout - Node 06',
+    location: 'BTM 2nd Stage Cluster',
+    lossPerHour: 3100,
+    activeAlerts: 2,
+    ordersPerHour: 125,
+    profitabilityScore: 71,
+    itemsExpiringSoon: 15,
+    coldStorageTemp: 6.8,
+    coldStorageUsagePct: 82,
+    coldStorageRiskScore: 6,
+    skus: [
+      { name: 'Cold Coffee 200ml', sku: 'COF-CLD-11', stock: 24, velocity: 'Medium', expiryHoursLeft: 6, status: 'Warning' }
+    ],
+    alerts: [
+      { type: 'expiry_warning', sku: 'COF-CLD-11', storeName: 'BTM Layout', severity: 'critical', message: 'High volume dairy beverage reaching terminal expiry.', recommendation: 'Dynamic Mark-down 60%', savedIfFollowed: 4800, lostIfIgnored: 8000, storeId: 'store_06', timeRemaining: 6, shelfSlot: 'Chill-Zone A' }
+    ]
+  },
+  {
+    _id: 'store_07',
+    name: 'Jayanagar - Node 07',
+    location: 'Jayanagar 4th Block Cluster',
+    lossPerHour: 950,
+    activeAlerts: 0,
+    ordersPerHour: 240,
+    profitabilityScore: 94,
+    itemsExpiringSoon: 3,
+    coldStorageTemp: 4.1,
+    coldStorageUsagePct: 50,
+    coldStorageRiskScore: 2,
+    skus: [],
+    alerts: []
   }
 ];
 
