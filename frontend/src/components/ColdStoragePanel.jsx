@@ -50,31 +50,31 @@ export default function ColdStoragePanel({ store }) {
   const barColor = status === 'critical' ? 'bg-red-500' : status === 'warning' ? 'bg-amber-500' : 'bg-emerald-500'
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+    <div className="bg-storeos-bg rounded-2xl border border-storeos-border shadow-sm p-6 transition-colors duration-300">
       <div className="flex items-center justify-between mb-5">
-        <h3 className="font-sans font-bold text-sm text-gray-900">{t('cold_storage')}</h3>
+        <h3 className="font-sans font-bold text-sm text-storeos-text tracking-tight uppercase">{t('cold_storage')}</h3>
         {!mlOnline && (
-          <span className="text-[10px] font-semibold px-2.5 py-1 bg-red-50 text-red-500 rounded-lg border border-red-100">
-            BACKUP
+          <span className="text-[10px] font-semibold px-2.5 py-1 bg-storeos-red/10 text-storeos-red rounded-lg border border-storeos-red/20 uppercase tracking-wider">
+            BACKUP MODE
           </span>
         )}
       </div>
 
-      <div className="grid grid-cols-3 gap-3 mb-5">
-        <div className="bg-gray-50 rounded-xl p-3 text-center">
-          <div className="text-[10px] font-medium text-gray-400 mb-1">{t('temperature')}</div>
-          <div className={`text-xl font-bold font-mono ${store.coldStorageTemp > 8 ? 'text-red-500' : store.coldStorageTemp > 6 ? 'text-amber-500' : 'text-blue-500'}`}>
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-5">
+        <div className="bg-storeos-surface border border-storeos-border rounded-xl p-3 text-center">
+          <div className="text-[10px] font-medium text-storeos-muted mb-1">{t('temperature')}</div>
+          <div className={`text-xl font-bold font-mono ${store.coldStorageTemp > 8 ? 'text-storeos-red' : store.coldStorageTemp > 6 ? 'text-storeos-amber' : 'text-storeos-cold'}`}>
             {store.coldStorageTemp}°C
           </div>
         </div>
-        <div className="bg-gray-50 rounded-xl p-3 text-center">
-          <div className="text-[10px] font-medium text-gray-400 mb-1">{t('usage')}</div>
-          <div className={`text-xl font-bold font-mono ${store.coldStorageUsagePct > 85 ? 'text-red-500' : store.coldStorageUsagePct > 70 ? 'text-amber-500' : 'text-emerald-500'}`}>
+        <div className="bg-storeos-surface border border-storeos-border rounded-xl p-3 text-center">
+          <div className="text-[10px] font-medium text-storeos-muted mb-1">{t('usage')}</div>
+          <div className={`text-xl font-bold font-mono ${store.coldStorageUsagePct > 85 ? 'text-storeos-red' : store.coldStorageUsagePct > 70 ? 'text-storeos-amber' : 'text-storeos-green'}`}>
             {store.coldStorageUsagePct}%
           </div>
         </div>
-        <div className="bg-gray-50 rounded-xl p-3 text-center">
-          <div className="text-[10px] font-medium text-gray-400 mb-1">{t('risk_score')}</div>
+        <div className="bg-storeos-surface border border-storeos-border rounded-xl p-3 text-center">
+          <div className="text-[10px] font-medium text-storeos-muted mb-1">{t('risk_score')}</div>
           <div className={`text-xl font-bold font-mono ${statusColor}`}>
             {score}/10
           </div>
@@ -82,11 +82,11 @@ export default function ColdStoragePanel({ store }) {
       </div>
 
       <div className="mb-4">
-        <div className="flex gap-1">
+        <div className="flex gap-1 h-3">
           {Array.from({ length: 10 }).map((_, i) => (
             <motion.div
               key={i}
-              className={`h-2.5 flex-1 rounded-full ${i < score ? barColor : 'bg-gray-100'}`}
+              className={`flex-1 rounded-full ${i < score ? barColor : 'bg-storeos-border/30'}`}
               initial={{ scaleY: 0 }}
               animate={{ scaleY: 1 }}
               transition={{ delay: i * 0.05 }}
@@ -96,20 +96,20 @@ export default function ColdStoragePanel({ store }) {
       </div>
 
       {riskData?.alternatives && riskData.alternatives.length > 0 && (
-        <div className="mt-5">
-          <h4 className="text-xs font-semibold text-amber-600 mb-3">{t('alternatives')}</h4>
-          <div className="space-y-2">
+        <div className="mt-5 pt-5 border-t border-storeos-border">
+          <h4 className="text-xs font-bold text-storeos-amber mb-3 uppercase tracking-wide">{t('ai_recommendations')}</h4>
+          <div className="space-y-3">
             {riskData.alternatives.map((alt, idx) => (
-              <div key={idx} className={`bg-gray-50 rounded-xl border p-3 ${alt.recommendation === 'high' ? 'border-emerald-200' : 'border-gray-100'}`}>
-                <div className="flex items-center justify-between mb-1">
-                  <span className="text-xs font-semibold text-gray-700">{idx + 1}. {alt.action}</span>
-                  <span className={`text-[9px] font-bold px-2 py-0.5 rounded-md ${alt.recommendation === 'high' ? 'bg-emerald-50 text-emerald-600' : alt.recommendation === 'medium' ? 'bg-amber-50 text-amber-600' : 'bg-gray-100 text-gray-400'}`}>
+              <div key={idx} className={`bg-storeos-surface rounded-xl border p-3 transition-all hover:shadow-sm ${alt.recommendation === 'high' ? 'border-storeos-green/20 bg-storeos-green/5' : 'border-storeos-border'}`}>
+                <div className="flex items-center justify-between mb-1.5">
+                  <span className="text-xs font-bold text-storeos-text">{idx + 1}. {alt.action}</span>
+                  <span className={`text-[9px] font-bold px-2 py-0.5 rounded-md border ${alt.recommendation === 'high' ? 'bg-storeos-green/10 text-storeos-green border-storeos-green/20' : alt.recommendation === 'medium' ? 'bg-storeos-amber/10 text-storeos-amber border-storeos-amber/20' : 'bg-storeos-muted/10 text-storeos-muted border-storeos-border'}`}>
                     {alt.recommendation.toUpperCase()}
                   </span>
                 </div>
-                <div className="flex gap-4 text-[10px]">
-                  <span className="text-gray-400">Cost: <span className="text-red-500 font-semibold">₹{alt.cost}</span></span>
-                  <span className="text-gray-400">Savings: <span className="text-emerald-500 font-semibold">₹{alt.savings}</span></span>
+                <div className="flex gap-4 text-[10px] font-medium">
+                  <span className="text-storeos-muted">Potential Cost: <span className="text-storeos-red">₹{alt.cost}</span></span>
+                  <span className="text-storeos-muted">Saved Capital: <span className="text-storeos-green">₹{alt.savings}</span></span>
                 </div>
               </div>
             ))}

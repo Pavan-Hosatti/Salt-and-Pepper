@@ -16,54 +16,56 @@ export default function AlertCard({ alert, onResolve, resolved }) {
     <motion.div
       initial={{ opacity: 0, x: -20 }}
       animate={{ opacity: 1, x: 0 }}
-      className={`bg-white rounded-xl border ${borderColor} p-5 ${resolved ? 'opacity-50' : ''} shadow-sm`}
+      className={`bg-storeos-bg rounded-xl border ${borderColor} p-5 ${resolved ? 'opacity-50' : ''} shadow-sm transition-colors duration-300`}
     >
-      <div className="flex items-start justify-between mb-3">
-        <div className="flex items-center gap-2">
+      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 mb-3">
+        <div className="flex items-center gap-2 flex-wrap">
           <span className={`text-[10px] font-semibold px-2.5 py-1 rounded-lg border ${badgeBg}`}>
             {typeLabel}
           </span>
-          <span className="text-xs text-gray-400">
+          <span className="text-xs text-storeos-muted">
             {alert.storeName} · {alert.shelfSlot}
           </span>
         </div>
         <CountdownTimer hours={alert.timeRemaining || 1} />
       </div>
 
-      <p className="text-sm text-gray-700 mb-3 leading-relaxed">
+      <p className="text-sm text-storeos-text mb-3 leading-relaxed">
         {alert.message}
       </p>
 
       {isConflict && (
-        <div className="bg-amber-50 rounded-xl border border-amber-100 p-4 mb-3">
-          <div className="text-[10px] font-semibold text-amber-600 mb-2">{t('recommendation')}</div>
-          <p className="text-xs text-gray-700 mb-3">{alert.recommendation}</p>
-          <div className="flex gap-4 text-xs">
-            <span className="text-emerald-600 font-semibold">✓ {t('saved_if_followed')}: ₹{alert.savedIfFollowed}</span>
-            <span className="text-red-500 font-semibold">✗ {t('lost_if_ignored')}: ₹{alert.lostIfIgnored}</span>
+        <div className="bg-storeos-amber/5 rounded-xl border border-storeos-amber/10 p-4 mb-3">
+          <div className="text-[10px] font-semibold text-storeos-amber mb-2 uppercase tracking-wide">{t('recommendation')}</div>
+          <p className="text-xs text-storeos-text mb-3">{alert.recommendation}</p>
+          <div className="flex flex-wrap gap-4 text-xs">
+            <span className="text-storeos-green font-semibold">✓ {t('saved_if_followed')}: ₹{alert.savedIfFollowed}</span>
+            <span className="text-storeos-red font-semibold">✗ {t('lost_if_ignored')}: ₹{alert.lostIfIgnored}</span>
           </div>
         </div>
       )}
 
       {alert.lossPerHour > 0 && (
-        <div className="text-xs font-semibold text-red-500 mb-3">
+        <div className="text-xs font-semibold text-storeos-red mb-3">
           {t('loss_per_hour')}: ₹{alert.lossPerHour?.toFixed(2)}
         </div>
       )}
 
-      {onResolve && !resolved && (
-        <button
-          onClick={() => onResolve(alert)}
-          className="text-xs font-semibold px-5 py-2.5 bg-emerald-50 text-emerald-600 border border-emerald-200 rounded-lg hover:bg-emerald-100 transition-all"
-        >
-          {t('resolve')}
-        </button>
-      )}
-      {resolved && (
-        <span className="text-xs font-semibold px-5 py-2.5 bg-emerald-50 text-emerald-400 rounded-lg border border-emerald-100">
-          {t('resolved')} ✓
-        </span>
-      )}
+      <div className="flex items-center gap-3">
+        {onResolve && !resolved && (
+          <button
+            onClick={() => onResolve(alert)}
+            className="text-xs font-semibold px-5 py-2.5 bg-storeos-green/10 text-storeos-green border border-storeos-green/20 rounded-lg hover:bg-storeos-green/20 transition-all focus:ring-2 focus:ring-storeos-green/20 outline-none"
+          >
+            {t('resolve')}
+          </button>
+        )}
+        {resolved && (
+          <span className="text-xs font-semibold px-5 py-2.5 bg-storeos-green/10 text-storeos-green opacity-60 rounded-lg border border-storeos-green/20">
+            {t('resolved')} ✓
+          </span>
+        )}
+      </div>
     </motion.div>
   )
 }
