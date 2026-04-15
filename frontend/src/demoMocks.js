@@ -1,8 +1,8 @@
 export const MOCK_STORES = [
   {
-    _id: 'store_mumbai_01',
-    name: 'Mumbai Central - Node 01',
-    location: 'Worli-Lower Parel Cluster',
+    _id: 'store_01',
+    name: 'Koramangala - Node 01',
+    location: 'Koramangala 4th Block Cluster',
     lossPerHour: 4520,
     activeAlerts: 4,
     ordersPerHour: 142,
@@ -18,15 +18,15 @@ export const MOCK_STORES = [
       { name: 'Cold Press Juice', sku: 'JCE-CP-12', stock: 18, velocity: 'Medium', expiryHoursLeft: 12, status: 'Warning' },
     ],
     alerts: [
-      { type: 'silent_loss', sku: 'MILK-ORG-01', storeName: 'Mumbai Central', severity: 'critical', message: 'Inventory deviation detected in Zone B (Freezer Logic Gap).', recommendation: 'Relocate to Secondary Cooler', savedIfFollowed: 12000, lostIfIgnored: 45000, storeId: 'store_mumbai_01', timeRemaining: 1.5, shelfSlot: 'Freezer A1' },
-      { type: 'conflict', sku: 'YOG-GRK-05', storeName: 'Mumbai Central', severity: 'critical', message: 'Price override conflict between Local Agent and Global Poly.', recommendation: 'Force Global Pricing', savedIfFollowed: 4500, lostIfIgnored: 8200, storeId: 'store_mumbai_01', timeRemaining: 0.8, shelfSlot: 'Dairy B4' },
-      { type: 'expiry_warning', sku: 'MILK-ORG-22', storeName: 'Mumbai Central', severity: 'warning', message: 'Terminal expiry approaching for dairy batch #441.', recommendation: 'Dynamic Mark-down 40%', savedIfFollowed: 3200, lostIfIgnored: 5500, storeId: 'store_mumbai_01', timeRemaining: 3.2, shelfSlot: 'Chill-Zone C' },
+      { type: 'silent_loss', sku: 'MILK-ORG-01', storeName: 'Koramangala', severity: 'critical', message: 'Inventory deviation detected in Zone B (Freezer Logic Gap).', recommendation: 'Relocate to Secondary Cooler', savedIfFollowed: 12000, lostIfIgnored: 45000, storeId: 'store_01', timeRemaining: 1.5, shelfSlot: 'Freezer A1' },
+      { type: 'conflict', sku: 'YOG-GRK-05', storeName: 'Koramangala', severity: 'critical', message: 'Price override conflict between Local Agent and Global Poly.', recommendation: 'Force Global Pricing', savedIfFollowed: 4500, lostIfIgnored: 8200, storeId: 'store_01', timeRemaining: 0.8, shelfSlot: 'Dairy B4' },
+      { type: 'expiry_warning', sku: 'MILK-ORG-22', storeName: 'Koramangala', severity: 'warning', message: 'Terminal expiry approaching for dairy batch #441.', recommendation: 'Dynamic Mark-down 40%', savedIfFollowed: 3200, lostIfIgnored: 5500, storeId: 'store_01', timeRemaining: 3.2, shelfSlot: 'Chill-Zone C' },
     ]
   },
   {
-    _id: 'store_bangalore_02',
-    name: 'Bangalore East - Node 04',
-    location: 'Indiranagar-HSR Cluster',
+    _id: 'store_02',
+    name: 'Indiranagar - Node 02',
+    location: '100 Feet Road Cluster',
     lossPerHour: 1250,
     activeAlerts: 1,
     ordersPerHour: 210,
@@ -40,13 +40,13 @@ export const MOCK_STORES = [
       { name: 'Almond Milk', sku: 'MLK-ALM-02', stock: 15, velocity: 'Low', expiryHoursLeft: 12, status: 'Warning' },
     ],
     alerts: [
-      { type: 'expiry_warning', sku: 'MLK-ALM-02', storeName: 'Bangalore East', severity: 'warning', message: 'Stock nearing terminal expiry (12h remaining).', recommendation: 'Apply 50% Flash Discount', savedIfFollowed: 2200, lostIfIgnored: 4000, storeId: 'store_bangalore_02', timeRemaining: 12, shelfSlot: 'Shelf 01' },
+      { type: 'expiry_warning', sku: 'MLK-ALM-02', storeName: 'Indiranagar', severity: 'warning', message: 'Stock nearing terminal expiry (12h remaining).', recommendation: 'Apply 50% Flash Discount', savedIfFollowed: 2200, lostIfIgnored: 4000, storeId: 'store_02', timeRemaining: 12, shelfSlot: 'Shelf 01' },
     ]
   },
   {
-    _id: 'store_delhi_03',
-    name: 'Delhi Northern - Node 07',
-    location: 'Rohini-Pitampura Cluster',
+    _id: 'store_03',
+    name: 'HSR Layout - Node 03',
+    location: 'HSR Sector 2 Cluster',
     lossPerHour: 3890,
     activeAlerts: 2,
     ordersPerHour: 95,
@@ -57,13 +57,13 @@ export const MOCK_STORES = [
     coldStorageRiskScore: 10,
     skus: [],
     alerts: [
-      { type: 'silent_loss', sku: 'HEAT-THRM-01', storeName: 'Delhi Northern', severity: 'critical', message: 'Thermal sensor anomaly: Core temperature rising rapidly (+4°C/hr).', recommendation: 'Activate Auxiliary Cooling', savedIfFollowed: 85000, lostIfIgnored: 120000, storeId: 'store_delhi_03', timeRemaining: 0.5, shelfSlot: 'Main Walk-in' },
+      { type: 'silent_loss', sku: 'HEAT-THRM-01', storeName: 'HSR Layout', severity: 'critical', message: 'Thermal sensor anomaly: Core temperature rising rapidly (+4°C/hr).', recommendation: 'Activate Auxiliary Cooling', savedIfFollowed: 85000, lostIfIgnored: 120000, storeId: 'store_03', timeRemaining: 0.5, shelfSlot: 'Main Walk-in' },
     ]
   },
   {
-    _id: 'store_hyderabad_04',
-    name: 'Hyd Jubilee - Node 12',
-    location: 'Banjara Hills Cluster',
+    _id: 'store_04',
+    name: 'Whitefield - Node 04',
+    location: 'ITPL Main Road Cluster',
     lossPerHour: 800,
     activeAlerts: 0,
     ordersPerHour: 310,
@@ -76,9 +76,9 @@ export const MOCK_STORES = [
     alerts: []
   },
   {
-    _id: 'store_pune_05',
-    name: 'Pune IT Park - Node 03',
-    location: 'Hinjewadi Cluster',
+    _id: 'store_05',
+    name: 'JP Nagar - Node 05',
+    location: 'JP Nagar 6th Phase Cluster',
     lossPerHour: 1800,
     activeAlerts: 1,
     ordersPerHour: 180,
@@ -89,7 +89,7 @@ export const MOCK_STORES = [
     coldStorageRiskScore: 4,
     skus: [],
     alerts: [
-      { type: 'conflict', sku: 'SKU-LOG-99', storeName: 'Pune IT Park', severity: 'warning', message: 'Logistics delay detected: Supplier sync mismatch (4hr gap).', recommendation: 'Trigger Secondary Sourcing', savedIfFollowed: 15400, lostIfIgnored: 22000, storeId: 'store_pune_05', timeRemaining: 4, shelfSlot: 'Inbound Bay' },
+      { type: 'conflict', sku: 'SKU-LOG-99', storeName: 'JP Nagar', severity: 'warning', message: 'Logistics delay detected: Supplier sync mismatch (4hr gap).', recommendation: 'Trigger Secondary Sourcing', savedIfFollowed: 15400, lostIfIgnored: 22000, storeId: 'store_05', timeRemaining: 4, shelfSlot: 'Inbound Bay' },
     ]
   }
 ];
